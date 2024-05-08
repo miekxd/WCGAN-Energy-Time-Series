@@ -89,7 +89,7 @@ class Trainer():
         self.latent_dim = args.latent_dim
         self.losses = {'G': [], 'D': [], 'GP': [], 'gradient_norm': [], 'LR_G': [], 'LR_D':[]}
 
-    def train(self, epochs, cepoch):
+    def train(self, epochs, cepoch): #cepoch is checkpoint epoch
         plot_num=0
         logger.info("Training starts ...")
         for epoch in range(cepoch,epochs):
@@ -182,10 +182,13 @@ class Trainer():
                 plt_progress(real_lines, fake_lines, epoch, self.scorepath)
                 
             if (epoch + 1) % 500 ==0: #model checkpointing
-                name = 'WCGAN'
                 checkpoint = '/opt/ml/checkpoints'
                 checkpoint_model(checkpoint, self.G, self.G_opt, epoch, "G")
-                checkpoint_model(checkpoint, self.D, self.D_opt, epoch, "D")   
+                checkpoint_model(checkpoint, self.D, self.D_opt, epoch, "D")
+              
+            if (epoch+1) == epochs: #model final checkpoint (for loading pretrained model and fine tuning) - also used for model eval
+                checkpoint_model(self.scorepath, self.G, self.G_opt, epoch, "G")
+                checkpoint_model(self.scorepath, self.D, self.D_opt, epoch, "D")
 
 
     def _grad_penalty(self, real_data, gen_data):

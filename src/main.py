@@ -27,9 +27,6 @@ def parse_args():
 
     return parser.parse_args()
 
-def save_model(model_dir, model, typ):
-    model.save(model_dir, filename=typ+".pth")
-
 def is_empty(path):
     try:
         entries = os.listdir(path)
@@ -140,6 +137,3 @@ if __name__ == "__main__":
     
     train = Trainer(args, G, D, G_opt, D_opt, scorepath, D_scheduler, G_scheduler, use_cuda=use_cuda)
     train.train(epochs=args.epochs, cepoch=epoch)
-
-    save_model(scorepath, G, "gen")
-    save_model(scorepath, D, "dis")
